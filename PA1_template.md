@@ -1,15 +1,11 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
-```{r, echo=TRUE, cache=TRUE, message=FALSE}
+
+```r
 library(dplyr)
 library(lubridate)
 activity.data <-
-  read.csv(unzip('activity.zip', 'activity.csv')) %>%
+  read.csv(unzip("activity.zip", 'activity.csv')) %>%
   mutate(
     date = ymd(date), 
     weekday = !(wday(date) %in% c(7, 1)),
@@ -22,9 +18,13 @@ total.number.of.steps.per.day.wo.na <- aggregate(activity.data.wo.na$steps,
 hist(total.number.of.steps.per.day.wo.na$x,
      col = 'red',
      breaks = 10,
-     xlab = 'Number of steps per day',
-     main = 'Total number of steps per day')
+     xlab = "Number of steps per day",
+     main = "Total number of steps per day")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-1-1.png) 
+
+```r
 mean.steps.per.day <- mean(total.number.of.steps.per.day.wo.na$x, na.rm = T)
 boxplot(total.number.of.steps.per.day.wo.na$x, ylab = 'Total number of steps per day')
 abline(h = mean.steps.per.day , lwd = 3, col = 'red')
@@ -35,7 +35,11 @@ legend(
   lty = 1,
   lwd = 2.5,
   col = c('red'))
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-1-2.png) 
+
+```r
 mean.steps.per.interval <- aggregate(activity.data.wo.na$steps,
                                      by=list(activity.data.wo.na$interval),
                                      FUN=mean)
@@ -44,24 +48,31 @@ plot(mean.steps.per.interval$Group.1,
      type='l',
      ylab='Average Steps',
      xlab='Interval')
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-1-3.png) 
+
+```r
 internval.with.highest.mean.steps <-
   mean.steps.per.interval[which.max(mean.steps.per.interval$x), ]$Group.1
 ```
 
-Interval `r internval.with.highest.mean.steps` has the highest average steps
+Interval 835 has the highest average steps
 
-```{r, echo=TRUE}
+
+```r
 number.of.rows.with.na <- nrow(activity.data) - nrow(activity.data.wo.na)
 ```
 
-There are `r number.of.rows.with.na` observations missing step data.
+There are 2304 observations missing step data.
 
-```{r, echo=TRUE}
+
+```r
 library(dplyr)
 na.rows.with.steps <-
   activity.data %>%
   filter(is.na(steps)) %>%
-  inner_join(mean.steps.per.interval, by = c('interval' = 'Group.1')) %>%
+  inner_join(mean.steps.per.interval, by = c("interval" = "Group.1")) %>%
   mutate(steps = x) %>%
   select(-c(x))
 
@@ -73,27 +84,32 @@ total.number.of.steps.per.day <- aggregate(composite.activity.data$steps,
 hist(total.number.of.steps.per.day$x,
      col = 'red',
      breaks = 10,
-     xlab = 'Number of steps per day',
-     main = 'Total number of steps per day')
+     xlab = "Number of steps per day",
+     main = "Total number of steps per day")
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
+```r
 composite.mean.steps.per.day <- mean(total.number.of.steps.per.day$x, na.rm = T)
 composite.median.steps.per.day <- median(total.number.of.steps.per.day$x, na.rm = T)
 ```
 
 If interval means are subsituted for NA values then  
-* The mean steps per day is `r format(composite.mean.steps.per.day)`
-* The median steps per day is `r format(composite.median.steps.per.day)`
+* The mean steps per day is 10766.19
+* The median steps per day is 10766.19
 
-```{r echo=TRUE}
+
+```r
 composite.mean.steps.per.interval <- aggregate(composite.activity.data$steps,
                                                by=list(composite.activity.data$interval,
                                                        composite.activity.data$weekday),
                                                FUN=mean)
 plot(composite.mean.steps.per.interval$Group.1,
      composite.mean.steps.per.interval$x,
-     type='n',
-     ylab = 'Average Steps',
-     xlab = 'Interval',
+     type="n",
+     ylab = "Average Steps",
+     xlab = "Interval",
      main = "Average Steps Per Interval")
 
 weekdays <-
@@ -104,12 +120,17 @@ weekends <-
   composite.mean.steps.per.interval %>%
   filter(!Group.2)
 
-lines(weekdays$Group.1, weekdays$x, col='red')
-lines(weekends$Group.1, weekends$x, col='blue')
+lines(weekdays$Group.1, weekdays$x, col="red")
+lines(weekends$Group.1, weekends$x, col="blue")
 
-legend('topright',
-       c('Weekdays', 'Weekends'),
-       lty = 1,
-       lwd = 2.5,
-       col = c('red', 'blue'))
+legend(
+  'topright',
+  c('Weekdays', 'Weekends'),
+  lty = 1,
+  lwd = 2.5,
+  col = c('red', 'blue'))
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
+
